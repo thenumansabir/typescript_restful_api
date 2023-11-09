@@ -1,13 +1,24 @@
 import express from "express";
-import TaskController from "./controllers";
+import TaskController from "./controllers/taskController";
+import UserController from "./controllers/userController";
+import { authenticateToken } from "./middleware/authMiddleware";
 
 const router = express.Router();
+// users APIs routes
+router.post("/register", UserController.registerUser);
+router.post("/login", UserController.loginUser);
 
-router.post("/tasks", TaskController.createTask);
-router.put("/tasks/:id", TaskController.updateTask);
-router.get("/tasks/:id", TaskController.getTask);
-router.get("/tasks", TaskController.getAllTasks);
-router.delete("/tasks/:id", TaskController.deleteTask);
+router.patch("/users/:id", authenticateToken, UserController.updateUser);
+router.get("/users/:id", authenticateToken, UserController.getUser);
+router.get("/users", authenticateToken, UserController.getAllUsers);
+router.delete("/users/:id",authenticateToken, UserController.deleteUser);
+
+// tasks APIs routes
+router.post("/tasks", authenticateToken, TaskController.createTask);
+router.patch("/tasks/:id", authenticateToken, TaskController.updateTask);
+router.get("/tasks/:id", authenticateToken, TaskController.getTask);
+router.get("/tasks", authenticateToken, TaskController.getAllTasks);
+router.delete("/tasks/:id", authenticateToken, TaskController.deleteTask);
 
 export default router;
 /*

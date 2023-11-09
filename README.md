@@ -31,3 +31,13 @@ To make the task more challenging, you can suggest the following enhancements:
 2. Add pagination and filtering options for listing tasks.
 3. Create a feature to upload and associate files with tasks.
 This backend development task will assess the developer's ability to build a RESTful API, interact with a database, handle HTTP requests and responses, and ensure type safety and error handling using TypeScript. It also encourages them to structure the code for maintainability and scalability.
+
+
+
+
+******************************** Version_02 ********************************
+
+1. Only user can create, update, get and delete task. use JWT token for Authorization and Authentication.
+2. New fields added status and role.
+3. User with status active can only logged in.
+4. User who's role is Admin can only create delete and update users.

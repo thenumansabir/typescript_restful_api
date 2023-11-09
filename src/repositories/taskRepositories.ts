@@ -1,5 +1,4 @@
-import { Response } from "express";
-import { TaskModel } from "./models";
+import { TaskModel } from "../models/taskModels";
 
 export class TasksRepo {
   async createTaskWithMongo(body: any) {
@@ -19,9 +18,9 @@ export class TasksRepo {
     }
   }
 
-  async getAllTasksWithMongo() {
+  async getAllTasksWithMongo(id: string) {
     try {
-      const tasks = await TaskModel.find();
+      const tasks = await TaskModel.find({ user_id: id });
       return tasks;
     } catch (error) {
       console.log("Error fetching task: ", error);
@@ -29,9 +28,9 @@ export class TasksRepo {
     }
   }
 
-  async getTaskWithMongo(id: any) {
+  async getTaskWithMongo(id: string, user_id: string) {
     try {
-      const task = await TaskModel.findById(id);
+      const task = await TaskModel.findOne({ _id: id, user_id: user_id });
       return task;
     } catch (error) {
       console.log("Error fetching task: ", error);
@@ -39,9 +38,12 @@ export class TasksRepo {
     }
   }
 
-  async updateTaskWithMongo(id: any, body: Object) {
+  async updateTaskWithMongo(id: string, body: Object, user_id: string) {
     try {
-      const task_exists = await TaskModel.findById(id);
+      const task_exists = await TaskModel.findById({
+        _id: id,
+        user_id: user_id,
+      });
       if (task_exists) {
         const task = await TaskModel.findByIdAndUpdate(id, body, { new: true });
         return task;
@@ -54,11 +56,14 @@ export class TasksRepo {
     }
   }
 
-  async deleteTaskWithMongo(id: any) {
+  async deleteTaskWithMongo(id: string, user_id: string) {
     try {
-      const task_exists = await TaskModel.findById(id);
+      const task_exists = await TaskModel.findById({
+        _id: id,
+        user_id: user_id,
+      });
       if (task_exists) {
-        const task = await TaskModel.findByIdAndDelete(id);
+        const task = await TaskModel.findOneAndDelete();
         return task;
       } else {
         return null;
