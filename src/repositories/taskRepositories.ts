@@ -18,9 +18,14 @@ export class TasksRepo {
     }
   }
 
-  async getAllTasksWithMongo(id: string) {
+  async getAllTasksWithMongo(id: string, page: number, page_size: number) {
     try {
-      const tasks = await TaskModel.find({ user_id: id });
+      const start_index = (page - 1) * page_size;
+      const end_index = page * page_size;
+      const tasks = await TaskModel.find({ user_id: id })
+        .skip(start_index)
+        .limit(page_size)
+        .exec();
       return tasks;
     } catch (error) {
       console.log("Error fetching task: ", error);

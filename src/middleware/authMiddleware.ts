@@ -8,7 +8,6 @@ export const authenticateToken = (
   next: NextFunction
 ) => {
   const bearer_token: any = req.headers.authorization;
-  console.log(bearer_token);
   const token = bearer_token.replace("Bearer ", "");
 
   if (!token) {

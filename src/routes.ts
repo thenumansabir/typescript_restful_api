@@ -5,7 +5,7 @@ import { authenticateToken } from "./middleware/authMiddleware";
 
 const router = express.Router();
 // users APIs routes
-router.post("/register", UserController.registerUser);
+router.post("/register",authenticateToken, UserController.registerUser);
 router.post("/login", UserController.loginUser);
 
 router.patch("/users/:id", authenticateToken, UserController.updateUser);

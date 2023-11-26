@@ -53,12 +53,27 @@ class TaskController {
     try {
       const user_id = req.body.decoded_token.user_id;
       const role = req.body.decoded_token.role;
+      // Pagination
+      const page = parseInt(req.query.page as string) || 1;
+      const page_size = parseInt(req.query.page_size as string) || 10;
+
       if (role === "user") {
-        const tasks = await this.myTask.getAllTasksWithMongo(user_id);
+        const tasks = await this.myTask.getAllTasksWithMongo(
+          user_id,
+          page,
+          page_size
+        );
         if (tasks === null || tasks.length === 0) {
           res.status(404).json({ error: "No tasks found" });
         } else {
-          res.status(200).json(tasks);
+          res
+            .status(200)
+            .json({
+              items: tasks,
+              currentPage: page,
+              pageSize: page_size,
+              totalPages: Math.ceil(tasks.length / page_size),
+            });
         }
       } else if (role === "admin") {
         res.status(400).json({ error: "Admin can not get tasks." });
