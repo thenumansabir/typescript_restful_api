@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { TasksRepo } from "../repositories/taskRepositories";
 import { ValidationError, DatabaseError } from "../errorHandlers";
 import { UserModel } from "../models/userModels";
+import { error } from "console";
 
 class TaskController {
   private myTask: TasksRepo;
@@ -11,14 +12,20 @@ class TaskController {
   // ************** Create Task *************
   createTask = async (req: Request, res: Response) => {
     try {
-      const user_id = req.body.decoded_token.user_id;
-      const role = req.body.decoded_token.role;
-
+      if (req.body.fileTooLarge) {
+        return res.status(400).json({message:'File size exceeds the limit of 2 MB'});
+      }
+      const buffer: any = req.file?.buffer;
+      const user_id =
+        (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
+      const role =
+        (req.headers.decoded_token as { role?: string })?.role ?? null;
       const body = {
         task_title: req.body.task_title,
         task_description: req.body.task_description,
-        is_complete: false,
+        is_completed: false,
         user_id: user_id,
+        upload_file: req.file ? buffer.toString("base64") : undefined,
       };
       if (role === "user") {
         if (!req.body.task_description) {
@@ -31,7 +38,7 @@ class TaskController {
           } else {
             res
               .status(201)
-              .json({ message: "Task created successfully", task });
+              .json({ message: "Task created successfully" });
           }
         }
       } else if (role === "admin") {
@@ -51,8 +58,10 @@ class TaskController {
   // ************** Get All Tasks **************
   getAllTasks = async (req: Request, res: Response) => {
     try {
-      const user_id = req.body.decoded_token.user_id;
-      const role = req.body.decoded_token.role;
+      const user_id =
+        (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
+      const role =
+        (req.headers.decoded_token as { role?: string })?.role ?? null;
       // Pagination
       const page = parseInt(req.query.page as string) || 1;
       const page_size = parseInt(req.query.page_size as string) || 10;
@@ -66,14 +75,12 @@ class TaskController {
         if (tasks === null || tasks.length === 0) {
           res.status(404).json({ error: "No tasks found" });
         } else {
-          res
-            .status(200)
-            .json({
-              items: tasks,
-              currentPage: page,
-              pageSize: page_size,
-              totalPages: Math.ceil(tasks.length / page_size),
-            });
+          res.status(200).json({
+            items: tasks,
+            currentPage: page,
+            pageSize: page_size,
+            totalPages: Math.ceil(tasks.length / page_size),
+          });
         }
       } else if (role === "admin") {
         res.status(400).json({ error: "Admin can not get tasks." });
@@ -92,8 +99,10 @@ class TaskController {
   // ************** Get Single Task **************
   getTask = async (req: Request, res: Response) => {
     try {
-      const user_id = req.body.decoded_token.user_id;
-      const role = req.body.decoded_token.role;
+      const user_id =
+        (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
+      const role =
+        (req.headers.decoded_token as { role?: string })?.role ?? null;
       if (role === "user") {
         const task = await this.myTask.getTaskWithMongo(req.params.id, user_id);
         if (task === null) {
@@ -118,8 +127,10 @@ class TaskController {
   // ************** Update Task **************
   updateTask = async (req: Request, res: Response) => {
     try {
-      const user_id = req.body.decoded_token.user_id;
-      const role = req.body.decoded_token.role;
+      const user_id =
+        (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
+      const role =
+        (req.headers.decoded_token as { role?: string })?.role ?? null;
       if (role === "user") {
         const task = await this.myTask.updateTaskWithMongo(
           req.params.id,
@@ -148,8 +159,10 @@ class TaskController {
   // ************** Delete Task **************
   deleteTask = async (req: Request, res: Response) => {
     try {
-      const user_id = req.body.decoded_token.user_id;
-      const role = req.body.decoded_token.role;
+      const user_id =
+        (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
+      const role =
+        (req.headers.decoded_token as { role?: string })?.role ?? null;
       if (role === "user") {
         const task = await this.myTask.deleteTaskWithMongo(
           req.params.id,
@@ -174,5 +187,5 @@ class TaskController {
     }
   };
 }
-
+//  data:image/png;base64,{ENCODED_STRING}
 export default new TaskController(new TasksRepo());

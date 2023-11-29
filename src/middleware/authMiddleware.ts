@@ -20,7 +20,8 @@ export const authenticateToken = (
     }
     if (decoded) {
       const decodedToken = jwt.verify(token, JWT_SECRET);
-      req.body.decoded_token = decoded;
+      // req.body.decoded_token = decoded;
+      req.headers.decoded_token = decoded;
     }
     next();
   });

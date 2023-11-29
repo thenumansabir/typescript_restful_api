@@ -2,19 +2,20 @@ import express from "express";
 import TaskController from "./controllers/taskController";
 import UserController from "./controllers/userController";
 import { authenticateToken } from "./middleware/authMiddleware";
+import { upload } from "./middleware/uploadMiddleware";
 
 const router = express.Router();
 // users APIs routes
-router.post("/register",authenticateToken, UserController.registerUser);
+router.post("/register", authenticateToken, UserController.registerUser);
 router.post("/login", UserController.loginUser);
 
 router.patch("/users/:id", authenticateToken, UserController.updateUser);
 router.get("/users/:id", authenticateToken, UserController.getUser);
 router.get("/users", authenticateToken, UserController.getAllUsers);
-router.delete("/users/:id",authenticateToken, UserController.deleteUser);
+router.delete("/users/:id", authenticateToken, UserController.deleteUser);
 
 // tasks APIs routes
-router.post("/tasks", authenticateToken, TaskController.createTask);
+router.post("/tasks", authenticateToken, upload.single("upload_file"),TaskController.createTask);
 router.patch("/tasks/:id", authenticateToken, TaskController.updateTask);
 router.get("/tasks/:id", authenticateToken, TaskController.getTask);
 router.get("/tasks", authenticateToken, TaskController.getAllTasks);

@@ -18,7 +18,7 @@ export class TasksRepo {
     }
   }
 
-  async getAllTasksWithMongo(id: string, page: number, page_size: number) {
+  async getAllTasksWithMongo(id: any, page: number, page_size: number) {
     try {
       const start_index = (page - 1) * page_size;
       const end_index = page * page_size;
@@ -33,7 +33,7 @@ export class TasksRepo {
     }
   }
 
-  async getTaskWithMongo(id: string, user_id: string) {
+  async getTaskWithMongo(id: string, user_id: any) {
     try {
       const task = await TaskModel.findOne({ _id: id, user_id: user_id });
       return task;
@@ -43,7 +43,7 @@ export class TasksRepo {
     }
   }
 
-  async updateTaskWithMongo(id: string, body: Object, user_id: string) {
+  async updateTaskWithMongo(id: any, body: Object, user_id: any) {
     try {
       const task_exists = await TaskModel.findById({
         _id: id,
@@ -61,7 +61,7 @@ export class TasksRepo {
     }
   }
 
-  async deleteTaskWithMongo(id: string, user_id: string) {
+  async deleteTaskWithMongo(id: string, user_id: any) {
     try {
       const task_exists = await TaskModel.findById({
         _id: id,

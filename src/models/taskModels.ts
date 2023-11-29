@@ -5,6 +5,7 @@ export interface Task {
   task_description: string;
   is_completed: boolean;
   user_id : string;
+  upload_file?: string
 }
 
 export interface TaskDocument extends Task, Document {}
@@ -14,6 +15,8 @@ const TaskSchema = new mongoose.Schema({
   task_description: { type: String, required: true },
   is_completed: { type: Boolean, default: false },
   user_id: { type: String, required: true },
+  upload_file: { type: String},
+
 
 });
 
