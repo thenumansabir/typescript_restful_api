@@ -7,7 +7,9 @@ export const upload = multer({
   limits: {
     fileSize: 1024 * 1024 * 5,
   },
-});
+}).array('files')
+
+
 
 // import path from "path";
 // import multer, { StorageEngine } from "multer";

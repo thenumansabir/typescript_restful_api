@@ -15,7 +15,7 @@ router.get("/users", authenticateToken, UserController.getAllUsers);
 router.delete("/users/:id", authenticateToken, UserController.deleteUser);
 
 // tasks APIs routes
-router.post("/tasks", authenticateToken, upload.single("upload_file"),TaskController.createTask);
+router.post("/tasks", authenticateToken, upload,TaskController.createTask);
 router.patch("/tasks/:id", authenticateToken, TaskController.updateTask);
 router.get("/tasks/:id", authenticateToken, TaskController.getTask);
 router.get("/tasks", authenticateToken, TaskController.getAllTasks);
