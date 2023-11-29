@@ -1,6 +1,7 @@
 import express from "express";
-import TaskController from "./controllers/taskController";
 import UserController from "./controllers/userController";
+import TaskController from "./controllers/taskController";
+import FileController from "./controllers/fileController";
 import { authenticateToken } from "./middleware/authMiddleware";
 import { upload } from "./middleware/uploadMiddleware";
 
@@ -15,7 +16,8 @@ router.get("/users", authenticateToken, UserController.getAllUsers);
 router.delete("/users/:id", authenticateToken, UserController.deleteUser);
 
 // tasks APIs routes
-router.post("/tasks", authenticateToken, upload,TaskController.createTask);
+router.post("/tasks", authenticateToken, TaskController.createTask);
+router.post("/upload", authenticateToken, upload, FileController.uploadFiles);
 router.patch("/tasks/:id", authenticateToken, TaskController.updateTask);
 router.get("/tasks/:id", authenticateToken, TaskController.getTask);
 router.get("/tasks", authenticateToken, TaskController.getAllTasks);

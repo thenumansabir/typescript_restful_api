@@ -13,21 +13,18 @@ class TaskController {
   createTask = async (req: Request, res: Response) => {
     try {
       // const buffer = req.files?.buffer
-      const buffer: any = (req.files as { buffer?: string })?.buffer ?? null;
+      // const buffer: any = (req.files as { buffer?: string })?.buffer ?? null;
       const user_id =
         (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
       const role =
         (req.headers.decoded_token as { role?: string })?.role ?? null;
-      const body = [
-        {
-          task_title: req.body.task_title,
-          task_description: req.body.task_description,
-          is_completed: false,
-          user_id: user_id,
-          // files: req.file ? buffer.toString("base64") : undefined
-        },
-        { files: req.files },
-      ];
+      const body = {
+        task_title: req.body.task_title,
+        task_description: req.body.task_description,
+        is_completed: false,
+        user_id: user_id,
+        // files: req.file ? buffer.toString("base64") : undefined
+      };
       if (role === "user") {
         if (!req.body.task_description) {
           res.status(400).json({ error: "Title and description are required" });
