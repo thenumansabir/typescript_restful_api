@@ -17,11 +17,15 @@ router.delete("/users/:id", authenticateToken, UserController.deleteUser);
 
 // tasks APIs routes
 router.post("/tasks", authenticateToken, TaskController.createTask);
-router.post("/upload", authenticateToken, upload, FileController.uploadFiles);
 router.patch("/tasks/:id", authenticateToken, TaskController.updateTask);
 router.get("/tasks/:id", authenticateToken, TaskController.getTask);
 router.get("/tasks", authenticateToken, TaskController.getAllTasks);
 router.delete("/tasks/:id", authenticateToken, TaskController.deleteTask);
+
+// tasks APIs routes
+router.post("/files", authenticateToken, upload, FileController.uploadFiles);
+router.delete("/files/:id", authenticateToken, FileController.deleteFile);
+
 
 export default router;
 /*

@@ -1,20 +1,37 @@
-import { FileModel } from './../models/fileModels';
+import { FileModel } from "./../models/fileModels";
+import { TaskModel } from "../models/taskModels";
 
 export class FilesRepo {
-  async uploadFileWithMongo(body: any) {
+  async uploadFileWithMongo(files: any[]) {
     try {
-      const task_exists = await FileModel.findOne({
-        task_title: body.task_title,
+      for (const file of files) {
+        const task_exist = await TaskModel.findOne({ _id: file.task_id });
+        if (!task_exist) {
+          return false;
+        } else {
+          await FileModel.create(file);
+        }
+      }
+      return true;
+    } catch (error) {
+      console.log("Error uploading file: ", error);
+      throw new Error("Could not upload file");
+    }
+  }
+  async deleteFileWithMongo(id: string) {
+    try {
+      const file_exist = await FileModel.findById({
+        _id: id,
       });
-      if (!task_exists) {
-        const task = await FileModel.create(body);
-        return task;
+      if (file_exist) {
+        const file = await FileModel.findOneAndDelete();
+        return true;
       } else {
-        return null;
+        return false;
       }
     } catch (error) {
-      console.log("Error creating task: ", error);
-      throw new Error("Could not create task");
+      console.log("Error deleting file: ", error);
+      throw new Error("Could not delete file");
     }
   }
 }

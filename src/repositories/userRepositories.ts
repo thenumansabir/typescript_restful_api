@@ -41,7 +41,6 @@ export class UsersRepo {
       const user: any = await UserModel.findOne({
         email: body.email,
       });
-      console.log(user)
       if (user.status === "active") {
         return user;
       } else {

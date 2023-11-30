@@ -170,7 +170,7 @@ class TaskController {
           res.status(200).json({ message: "Task deleted successfully" });
         }
       } else if (role === "admin") {
-        res.status(400).json({ error: "Admin can not get task." });
+        res.status(400).json({ error: "Admin can not delete task." });
       }
     } catch (error) {
       if (error instanceof ValidationError) {
