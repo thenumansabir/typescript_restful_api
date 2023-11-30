@@ -1,5 +1,9 @@
+import { Task } from "./../models/taskModels";
 import { FileModel } from "./../models/fileModels";
 import { TaskModel } from "../models/taskModels";
+import { ObjectId } from "mongodb";
+
+const yourObjectId = new ObjectId();
 
 export class FilesRepo {
   async uploadFileWithMongo(files: any[]) {
@@ -9,7 +13,15 @@ export class FilesRepo {
         if (!task_exist) {
           return false;
         } else {
-          await FileModel.create(file);
+          const response = await FileModel.create(file);
+          const file_id: string = response._id.toString();
+          const file_type = file.file_type;
+
+          await TaskModel.findByIdAndUpdate(file.task_id, {
+            $push: {
+              files_url: `${file_type}/${file_id}`,
+            },
+          });
         }
       }
       return true;

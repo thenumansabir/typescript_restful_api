@@ -23,7 +23,7 @@ class TaskController {
         task_description: req.body.task_description,
         is_completed: false,
         user_id: user_id,
-        // files: req.file ? buffer.toString("base64") : undefined
+        files_url: []
       };
       if (role === "user") {
         if (!req.body.task_description) {

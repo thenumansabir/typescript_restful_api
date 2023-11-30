@@ -31,8 +31,6 @@ class FileController {
         files_body.push(body);
       });
       if (role === "user") {
-        console.log("req.body.task_id", req.body.task_id);
-        console.log("req.files", req.files);
         if (
           req.body.task_id === undefined ||
           !req.files ||
