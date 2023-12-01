@@ -17,7 +17,7 @@ export class FilesRepo {
           const file_id: string = response._id.toString();
           const file_type = file.file_type;
 
-          await TaskModel.findByIdAndUpdate(file.task_id, {
+         await TaskModel.findByIdAndUpdate(file.task_id, {
             $push: {
               files_url: `${file_type}/${file_id}`,
             },
@@ -36,8 +36,8 @@ export class FilesRepo {
       const file = await FileModel.findById({
         _id: id,
       });
-      const base64_string = file?.file_base64;
-      return base64_string;
+      // const base64_string = file?.file_base64;
+      return file;
     } catch (error) {
       console.log("Error fetching task: ", error);
       throw new Error("Could not fetch task");

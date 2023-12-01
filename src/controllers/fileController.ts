@@ -74,8 +74,16 @@ class FileController {
         if (!response) {
           res.status(404).json({ error: "No file found" });
         } else {
-          res.setHeader("Content-Type", "image/png");
-          res.send(Buffer.from(response, "base64"));
+          const base64String = response.file_base64;
+          const mimetype = `${response.file_type}/${response.file_ext}`;
+          const filename = "download";
+
+          res.setHeader("Content-Type", mimetype);
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename=${filename}.${response.file_ext}`
+          );
+          res.send(Buffer.from(base64String, "base64"));
           // res.status(200).json(response);
         }
       } else if (role === "admin") {
