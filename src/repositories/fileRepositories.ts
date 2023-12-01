@@ -30,6 +30,20 @@ export class FilesRepo {
       throw new Error("Could not upload file");
     }
   }
+
+  async getFileWithMongo(id: any) {
+    try {
+      const file = await FileModel.findById({
+        _id: id,
+      });
+      const base64_string = file?.file_base64;
+      return base64_string;
+    } catch (error) {
+      console.log("Error fetching task: ", error);
+      throw new Error("Could not fetch task");
+    }
+  }
+
   async deleteFileWithMongo(id: string) {
     try {
       const file_exist = await FileModel.findById({

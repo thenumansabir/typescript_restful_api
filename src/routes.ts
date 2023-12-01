@@ -24,8 +24,9 @@ router.delete("/tasks/:id", authenticateToken, TaskController.deleteTask);
 
 // tasks APIs routes
 router.post("/files", authenticateToken, upload, FileController.uploadFiles);
+// router.get("/image/:id", authenticateToken, FileController.getFile);
 router.delete("/files/:id", authenticateToken, FileController.deleteFile);
-
+router.get("/image/:id", FileController.getFile);
 
 export default router;
 /*

@@ -62,6 +62,36 @@ class FileController {
     }
   };
 
+  // ************** get File *************
+  getFile = async (req: Request, res: Response) => {
+    try {
+      const user_id = "65604c8d3e58477395d6a17c";
+      // const user_id = (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
+      const role = "user";
+      // const role = "user" (req.headers.decoded_token as { role?: string })?.role ?? null;
+      if (role === "user") {
+        const response = await this.myFile.getFileWithMongo(req.params.id);
+        if (!response) {
+          res.status(404).json({ error: "No file found" });
+        } else {
+          res.setHeader("Content-Type", "image/png");
+          res.send(Buffer.from(response, "base64"));
+          // res.status(200).json(response);
+        }
+      } else if (role === "admin") {
+        res.status(400).json({ error: "Admin can not get file." });
+      }
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        res.status(400).json({ error: error.message });
+      } else if (error instanceof DatabaseError) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "An unexpected error occurred" });
+      }
+    }
+  };
+
   // ************** Delete File *************
   deleteFile = async (req: Request, res: Response) => {
     try {
