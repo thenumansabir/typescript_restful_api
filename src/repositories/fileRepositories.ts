@@ -6,7 +6,7 @@ import { ObjectId } from "mongodb";
 const yourObjectId = new ObjectId();
 
 export class FilesRepo {
-  async uploadFileWithMongo(files: any[]) {
+  async uploadFilesInDB(files: any[]) {
     try {
       for (const file of files) {
         const task_exist = await TaskModel.findOne({ _id: file.task_id });
@@ -31,7 +31,7 @@ export class FilesRepo {
     }
   }
 
-  async getFileWithMongo(id: any) {
+  async getFileFromDB(id: any) {
     try {
       const file = await FileModel.findById({
         _id: id,
@@ -44,7 +44,7 @@ export class FilesRepo {
     }
   }
 
-  async deleteFileWithMongo(id: string) {
+  async deleteFileFromDB(id: string) {
     try {
       const file_exist = await FileModel.findById({
         _id: id,

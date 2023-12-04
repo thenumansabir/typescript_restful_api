@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import { JWT_SECRET } from "../config/config.services";
 
 export class UsersRepo {
-  async registerUserWithMongo(body: any) {
+  async userRegistration(body: any) {
     try {
       const user_exists = await UserModel.findOne({
         email: body.email,
@@ -36,7 +36,7 @@ export class UsersRepo {
     }
   }
 
-  async loginUserWithMongo(body: any) {
+  async userLogin(body: any) {
     try {
       const user: any = await UserModel.findOne({
         email: body.email,
@@ -52,7 +52,7 @@ export class UsersRepo {
     }
   }
 
-  async getAllUsersWithMongo() {
+  async getAllUsersFromDB() {
     try {
       const users = await UserModel.find({ role: "user" });
       return users;
@@ -62,7 +62,7 @@ export class UsersRepo {
     }
   }
 
-  async getUserWithMongo(id: any) {
+  async getUserFromDB(id: any) {
     try {
       const user = await UserModel.find().and([{ _id: id }, { role: "user" }]);
       return user;
@@ -72,7 +72,7 @@ export class UsersRepo {
     }
   }
 
-  async updateUserWithMongo(id: any, body: any) {
+  async updateUserInDB(id: any, body: any) {
     try {
       const user_exists = await UserModel.find().and([
         { _id: id },
@@ -95,7 +95,7 @@ export class UsersRepo {
     }
   }
 
-  async deleteUserWithMongo(id: any) {
+  async deleteUserFromDB(id: any) {
     try {
       const user_exists = await UserModel.find().and([
         { _id: id },

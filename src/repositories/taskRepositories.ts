@@ -1,7 +1,7 @@
 import { TaskModel } from "../models/taskModels";
 
 export class TasksRepo {
-  async createTaskWithMongo(body: any) {
+  async createTaskInDB(body: any) {
     try {
       const task_exists = await TaskModel.findOne({
         task_title: body.task_title,
@@ -18,7 +18,7 @@ export class TasksRepo {
     }
   }
 
-  async getAllTasksWithMongo(id: any, page: number, page_size: number) {
+  async getAllTasksFromDB(id: any, page: number, page_size: number) {
     try {
       const start_index = (page - 1) * page_size;
       const end_index = page * page_size;
@@ -33,7 +33,7 @@ export class TasksRepo {
     }
   }
 
-  async getTaskWithMongo(id: string, user_id: any) {
+  async getTaskFromDB(id: string, user_id: any) {
     try {
       const task = await TaskModel.findOne({ _id: id, user_id: user_id });
       return task;
@@ -43,7 +43,7 @@ export class TasksRepo {
     }
   }
 
-  async updateTaskWithMongo(id: any, body: Object, user_id: any) {
+  async updateTaskInDB(id: any, body: Object, user_id: any) {
     try {
       const task_exists = await TaskModel.findById({
         _id: id,
@@ -61,7 +61,7 @@ export class TasksRepo {
     }
   }
 
-  async deleteTaskWithMongo(id: string, user_id: any) {
+  async deleteTaskFromDB(id: string, user_id: any) {
     try {
       const task_exists = await TaskModel.findById({
         _id: id,

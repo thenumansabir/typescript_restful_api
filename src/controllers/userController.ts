@@ -18,7 +18,7 @@ class UserController {
         res.status(400).json({ error: "Email and password are required" });
         return;
       } else {
-        const user = await this.myUser.registerUserWithMongo(req.body);
+        const user = await this.myUser.userRegistration(req.body);
         if (user === null) {
           return res.status(409).json({ error: "User already exists" });
         } else {
@@ -47,7 +47,7 @@ class UserController {
           .json({ error: "Email and password are required" });
       }
 
-      const user = await this.myUser.loginUserWithMongo(req.body);
+      const user = await this.myUser.userLogin(req.body);
 
       if (!user) {
         return res.status(404).json({ error: "User not found" });
@@ -91,7 +91,7 @@ class UserController {
     try {
       const role = req.body.decoded_token.role;
       if (role === "admin") {
-        const users = await this.myUser.getAllUsersWithMongo();
+        const users = await this.myUser.getAllUsersFromDB();
         if (users === null || users.length === 0) {
           res.status(404).json({ error: "No user found" });
         } else {
@@ -116,7 +116,7 @@ class UserController {
     try {
       const role = req.body.decoded_token.role;
       if (role === "admin") {
-        const user = await this.myUser.getUserWithMongo(req.params.id);
+        const user = await this.myUser.getUserFromDB(req.params.id);
         if (user === null || user.length === 0) {
           res.status(404).json({ error: "No user found" });
         } else {
@@ -141,7 +141,7 @@ class UserController {
     try {
       const role = req.body.decoded_token.role;
       if (role === "admin") {
-        const user = await this.myUser.updateUserWithMongo(
+        const user = await this.myUser.updateUserInDB(
           req.params.id,
           req.body
         );
@@ -169,7 +169,7 @@ class UserController {
     try {
       const role = req.body.decoded_token.role;
       if (role === "admin") {
-        const user = await this.myUser.deleteUserWithMongo(req.params.id);
+        const user = await this.myUser.deleteUserFromDB(req.params.id);
         if (user === null) {
           res.status(404).json({ error: "No user found" });
         } else {

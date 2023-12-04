@@ -39,7 +39,7 @@ class FileController {
           res.status(400).json({ error: "file and task_id are required" });
           return;
         } else {
-          const response: any = await this.myFile.uploadFileWithMongo(
+          const response: any = await this.myFile.uploadFilesInDB(
             files_body
           );
           if (!response) {
@@ -70,7 +70,7 @@ class FileController {
       const role = "user";
       // const role = "user" (req.headers.decoded_token as { role?: string })?.role ?? null;
       if (role === "user") {
-        const response = await this.myFile.getFileWithMongo(req.params.id);
+        const response = await this.myFile.getFileFromDB(req.params.id);
         if (!response) {
           res.status(404).json({ error: "No file found" });
         } else {
@@ -108,7 +108,7 @@ class FileController {
       const role =
         (req.headers.decoded_token as { role?: string })?.role ?? null;
       if (role === "user") {
-        const response = await this.myFile.deleteFileWithMongo(req.params.id);
+        const response = await this.myFile.deleteFileFromDB(req.params.id);
         if (!response) {
           res.status(404).json({ error: "No file found" });
         } else {

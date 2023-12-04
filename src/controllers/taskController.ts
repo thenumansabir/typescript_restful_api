@@ -30,7 +30,7 @@ class TaskController {
           res.status(400).json({ error: "Title and description are required" });
           return;
         } else {
-          const task = await this.myTask.createTaskWithMongo(body);
+          const task = await this.myTask.createTaskInDB(body);
           if (task === null) {
             return res.status(409).json({ error: "Task already exists" });
           } else {
@@ -63,7 +63,7 @@ class TaskController {
       const page_size = parseInt(req.query.page_size as string) || 10;
 
       if (role === "user") {
-        const tasks = await this.myTask.getAllTasksWithMongo(
+        const tasks = await this.myTask.getAllTasksFromDB(
           user_id,
           page,
           page_size
@@ -100,7 +100,7 @@ class TaskController {
       const role =
         (req.headers.decoded_token as { role?: string })?.role ?? null;
       if (role === "user") {
-        const task = await this.myTask.getTaskWithMongo(req.params.id, user_id);
+        const task = await this.myTask.getTaskFromDB(req.params.id, user_id);
         if (task === null) {
           res.status(404).json({ error: "No task found" });
         } else {
@@ -128,7 +128,7 @@ class TaskController {
       const role =
         (req.headers.decoded_token as { role?: string })?.role ?? null;
       if (role === "user") {
-        const task = await this.myTask.updateTaskWithMongo(
+        const task = await this.myTask.updateTaskInDB(
           req.params.id,
           req.body,
           user_id
@@ -160,7 +160,7 @@ class TaskController {
       const role =
         (req.headers.decoded_token as { role?: string })?.role ?? null;
       if (role === "user") {
-        const task = await this.myTask.deleteTaskWithMongo(
+        const task = await this.myTask.deleteTaskFromDB(
           req.params.id,
           user_id
         );
