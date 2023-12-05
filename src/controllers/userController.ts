@@ -23,7 +23,7 @@ class UserController {
           return res.status(409).json({ error: "User already exists" });
         } else {
           res.status(201).json({
-            message: `${user.email} registered successfully.`,
+            message: 'User registered successfully.',
           });
         }
       }
