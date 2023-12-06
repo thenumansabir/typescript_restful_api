@@ -9,5 +9,8 @@ const poolConfig: PoolConfig = {
 };
 
 const pool = new Pool(poolConfig);
+// pool.on("connect", () => {
+//   console.log("Connected to the database");
+// });
 
 export default pool;
