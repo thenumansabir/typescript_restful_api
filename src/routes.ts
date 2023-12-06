@@ -11,9 +11,9 @@ router.post("/register", UserController.registerUser);
 router.post("/login", UserController.loginUser);
 
 // router.patch("/users/:id", authenticateToken, UserController.updateUser);
-// router.get("/users/:id", authenticateToken, UserController.getUser);
-// router.get("/users", authenticateToken, UserController.getAllUsers);
-// router.delete("/users/:id", authenticateToken, UserController.deleteUser);
+router.get("/users/:id", authenticateToken, UserController.getUser);
+router.get("/users", authenticateToken, UserController.getAllUsers);
+router.delete("/users/:id", authenticateToken, UserController.deleteUser);
 
 // tasks APIs routes
 router.post("/tasks", authenticateToken, TaskController.createTask);
