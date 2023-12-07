@@ -18,4 +18,11 @@ export class Queries {
   updateTask =
     "UPDATE tasks SET task_title = $1, task_description = $2 WHERE id = $3 AND user_id = $4";
   deleteTask = "DELETE FROM tasks WHERE id = $1 AND user_id = $2";
+
+  // ------------ Files Queries ------------
+  checkTaskExistsById = "SELECT t from tasks t WHERE t.id = $1";
+  uploadFile =
+    "INSERT INTO files (task_id,file_name,file_type,file_ext,file_base64) VALUES ($1, $2, $3, $4,$5) RETURNING id";
+  pushFileIdInTask =
+    "UPDATE tasks SET files_url = files_url || $1 WHERE id = $2";
 }

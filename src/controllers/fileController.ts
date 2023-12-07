@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { FilesRepo } from "../repositories/fileRepositories";
+// import { FilesRepo } from "../repositories/fileRepositories";
+import { FilesRepo } from "../repositories/fileRepoPG";
 import { ValidationError, DatabaseError } from "../errorHandlers";
 
 class FileController {
@@ -52,6 +53,7 @@ class FileController {
         res.status(400).json({ error: "Admin can not upload files." });
       }
     } catch (error) {
+      console.log("Error: ",error)
       if (error instanceof ValidationError) {
         res.status(400).json({ error: error.message });
       } else if (error instanceof DatabaseError) {
