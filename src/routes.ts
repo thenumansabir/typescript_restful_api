@@ -10,14 +10,14 @@ const router = express.Router();
 router.post("/register", UserController.registerUser);
 router.post("/login", UserController.loginUser);
 
-// router.patch("/users/:id", authenticateToken, UserController.updateUser);
+router.patch("/users/:id", authenticateToken, UserController.updateUser);
 router.get("/users/:id", authenticateToken, UserController.getUser);
 router.get("/users", authenticateToken, UserController.getAllUsers);
 router.delete("/users/:id", authenticateToken, UserController.deleteUser);
 
 // tasks APIs routes
 router.post("/tasks", authenticateToken, TaskController.createTask);
-router.patch("/tasks/:id", authenticateToken, TaskController.updateTask);
+// router.patch("/tasks/:id", authenticateToken, TaskController.updateTask);
 router.get("/tasks/:id", authenticateToken, TaskController.getTask);
 router.get("/tasks", authenticateToken, TaskController.getAllTasks);
 router.delete("/tasks/:id", authenticateToken, TaskController.deleteTask);

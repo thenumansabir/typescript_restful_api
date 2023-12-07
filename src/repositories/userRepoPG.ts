@@ -1,11 +1,10 @@
-import { UserRole } from "./../models/userModels";
-import { UserModel } from "../models/userModels";
 import bcrypt from "bcrypt";
 import pool from "../db";
 import { Queries } from "../queries/queries";
 
 export class UsersRepo {
   queries = new Queries();
+
   userRegistration(body: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -87,67 +86,43 @@ export class UsersRepo {
       }
     });
   }
-  // updateUserInDB(id: any, body: any): Promise<any> {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const password: string = body.password;
-  //       const hashedPassword: string = await bcrypt.hash(password, 10);
+  updateUserInDB(id: any, body: any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const password: string = body.password;
+        const hashedPassword: string = await bcrypt.hash(password, 10);
 
-  //       pool.query(this.queries.getUserById, [id], (error, results) => {
-  //         const noStudentFound = !results.rows.length;
-  //         if (noStudentFound) {
-  //           reject();
-  //         } else {
-  //           pool.query(
-  //             this.queries.updateUser,
-  //             [body.email, hashedPassword, body.status, body.role, id],
-  //             (error, results) => {
-  //               console.log("=====", results);
-  //               if (error) throw error;
-  //               else {
-  //                 resolve(results);
-  //               }
-  //             }
-  //           );
-  //         }
-  //       });
-  //     } catch (error) {
-  //       reject(error);
-  //       console.log("Error updating user: ", error);
-  //       throw new Error("Could not update user");
-  //     }
-  //   });
-  // }
-
-  // async updateUserInDB(id: any, body: any) {
-  //   try {
-  //     const user_exists = await UserModel.find().and([
-  //       { _id: id },
-  //       { role: "user" },
-  //     ]);
-  //     if (user_exists.length !== 0) {
-  //       if (body.password) {
-  //         body.password = await bcrypt.hash(body.password, 10);
-  //       }
-  //       const user = await UserModel.findByIdAndUpdate(id, body, {
-  //         new: true,
-  //       });
-  //       return user;
-  //     } else {
-  //       return null;
-  //     }
-  //   } catch (error) {
-  //     console.log("Error updating user: ", error);
-  //     throw new Error("Could not update user");
-  //   }
-  // }
+        pool.query(this.queries.getUserById, [id], (error, results) => {
+          const noStudentFound = !results.rows.length;
+          if (noStudentFound) {
+            reject();
+          } else {
+            pool.query(
+              this.queries.updateUser,
+              [body.email, hashedPassword, body.status, body.role, id],
+              (error, results) => {
+                if (error) throw error;
+                else {
+                  resolve(results);
+                }
+              }
+            );
+          }
+        });
+      } catch (error) {
+        reject(error);
+        console.log("Error updating user: ", error);
+        throw new Error("Could not update user");
+      }
+    });
+  }
 
   deleteUserFromDB(id: any): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
         pool.query(this.queries.getUserById, [id], (error, results) => {
-          const noStudentFound = !results.rows.length;
-          if (noStudentFound) {
+          const no_user_found = !results.rows.length;
+          if (no_user_found) {
             resolve(false);
           } else {
             pool.query(this.queries.deleteUser, [id], (error, results) => {
@@ -158,8 +133,8 @@ export class UsersRepo {
         });
       } catch (error) {
         reject(error);
-        console.log("Error fetching users: ", error);
-        throw new Error("Could not fetch users");
+        console.log("Error deleting users: ", error);
+        throw new Error("Could not delete users");
       }
     });
   }

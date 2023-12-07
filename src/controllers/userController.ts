@@ -61,8 +61,9 @@ class UserController {
         }
 
         if (result) {
+          const id:any = user._id ? '_id' : 'id'
           const token = jwt.sign(
-            { email: user.email, user_id: user._id, role: user.role },
+            { email: user.email, user_id: user.id, role: user.role },
             JWT_SECRET,
             {
               expiresIn: "1h",
@@ -141,30 +142,30 @@ class UserController {
   };
 
   // ************** Update User (Only Admin can) **************
-  // updateUser = async (req: Request, res: Response) => {
-  //   try {
-  //     const role =
-  //       (req.headers.decoded_token as { role?: string })?.role ?? null;
-  //     if (role === "admin") {
-  //       const user = await this.myUser.updateUserInDB(req.params.id, req.body);
-  //       if (user === null) {
-  //         res.status(404).json({ error: "No user found" });
-  //       } else {
-  //         res.status(200).json({ message: "User successfully updated." });
-  //       }
-  //     } else if (role === "user") {
-  //       res.status(400).json({ error: "user can not update user." });
-  //     }
-  //   } catch (error) {
-  //     if (error instanceof ValidationError) {
-  //       res.status(400).json({ error: error.message });
-  //     } else if (error instanceof DatabaseError) {
-  //       res.status(500).json({ error: error.message });
-  //     } else {
-  //       res.status(500).json({ error: "An unexpected error occurred" });
-  //     }
-  //   }
-  // };
+  updateUser = async (req: Request, res: Response) => {
+    try {
+      const role =
+        (req.headers.decoded_token as { role?: string })?.role ?? null;
+      if (role === "admin") {
+        const user = await this.myUser.updateUserInDB(req.params.id, req.body);
+        if (user === null) {
+          res.status(404).json({ error: "No user found" });
+        } else {
+          res.status(200).json({ message: "User successfully updated." });
+        }
+      } else if (role === "user") {
+        res.status(400).json({ error: "user can not update user." });
+      }
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        res.status(400).json({ error: error.message });
+      } else if (error instanceof DatabaseError) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "An unexpected error occurred" });
+      }
+    }
+  };
 
   // ************** Delete User (Only Admin can) **************
   deleteUser = async (req: Request, res: Response) => {
