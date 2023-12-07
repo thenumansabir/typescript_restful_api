@@ -148,7 +148,7 @@ class UserController {
         (req.headers.decoded_token as { role?: string })?.role ?? null;
       if (role === "admin") {
         const user = await this.myUser.updateUserInDB(req.params.id, req.body);
-        if (user === null) {
+        if (!user) {
           res.status(404).json({ error: "No user found" });
         } else {
           res.status(200).json({ message: "User successfully updated." });

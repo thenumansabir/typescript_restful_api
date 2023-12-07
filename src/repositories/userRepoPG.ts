@@ -86,20 +86,18 @@ export class UsersRepo {
       }
     });
   }
+
   updateUserInDB(id: any, body: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const password: string = body.password;
-        const hashedPassword: string = await bcrypt.hash(password, 10);
-
         pool.query(this.queries.getUserById, [id], (error, results) => {
-          const noStudentFound = !results.rows.length;
-          if (noStudentFound) {
+          const no_user_found = !results.rows.length;
+          if (no_user_found) {
             reject();
           } else {
             pool.query(
               this.queries.updateUser,
-              [body.email, hashedPassword, body.status, body.role, id],
+              [body.status, id],
               (error, results) => {
                 if (error) throw error;
                 else {

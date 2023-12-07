@@ -1,7 +1,6 @@
 import pool from "../db";
 import { Queries } from "../queries/queries";
 
-
 export class TasksRepo {
   queries = new Queries();
 
@@ -72,24 +71,36 @@ export class TasksRepo {
     });
   }
 
-  //   async updateTaskInDB(id: any, body: Object, user_id: any) {
-  //     try {
-  //       const task_exists = await TaskModel.findById({
-  //         _id: id,
-  //         user_id: user_id,
-  //       });
-  //       if (task_exists) {
-  //         const task = await TaskModel.findByIdAndUpdate(id, body, { new: true });
-  //         return task;
-  //       } else {
-  //         return null;
-  //       }
-  //     } catch (error) {
-  //       console.log("Error updating task: ", error);
-  //       throw new Error("Could not update task");
-  //     }
-  //   }
-
+  updateTaskInDB(id: any, user_id: any, body: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      try {
+        pool.query(
+          this.queries.getTaskById,
+          [id, user_id],
+          (error, results) => {
+            if (results.rows.length === 0) {
+              resolve(false);
+            } else {
+              pool.query(
+                this.queries.updateTask,
+                [body.task_title, body.task_description, id, user_id],
+                (error, results) => {
+                  if (error) throw error;
+                  else {
+                    resolve(results);
+                  }
+                }
+              );
+            }
+          }
+        );
+      } catch (error) {
+        reject(error);
+        console.log("Error updating user: ", error);
+        throw new Error("Could not update user");
+      }
+    });
+  }
   deleteTaskFromDB(id: any, user_id: any): Promise<any> {
     return new Promise((resolve, reject) => {
       try {

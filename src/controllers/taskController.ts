@@ -117,37 +117,37 @@ class TaskController {
     }
   };
 
-  // // ************** Update Task **************
-  // updateTask = async (req: Request, res: Response) => {
-  //   try {
-  //     const user_id =
-  //       (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
-  //     const role =
-  //       (req.headers.decoded_token as { role?: string })?.role ?? null;
-  //     if (role === "user") {
-  //       const task = await this.myTask.updateTaskInDB(
-  //         req.params.id,
-  //         req.body,
-  //         user_id
-  //       );
-  //       if (task === null) {
-  //         res.status(404).json({ error: "No task found" });
-  //       } else {
-  //         res.status(200).json({ message: "Task updated successfully." });
-  //       }
-  //     } else if (role === "admin") {
-  //       res.status(400).json({ error: "Admin can not get task." });
-  //     }
-  //   } catch (error) {
-  //     if (error instanceof ValidationError) {
-  //       res.status(400).json({ error: error.message });
-  //     } else if (error instanceof DatabaseError) {
-  //       res.status(500).json({ error: error.message });
-  //     } else {
-  //       res.status(500).json({ error: "An unexpected error occurred" });
-  //     }
-  //   }
-  // };
+  // ************** Update Task **************
+  updateTask = async (req: Request, res: Response) => {
+    try {
+      const user_id =
+        (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
+      const role =
+        (req.headers.decoded_token as { role?: string })?.role ?? null;
+      if (role === "user") {
+        const task = await this.myTask.updateTaskInDB(
+          req.params.id,
+          user_id,
+          req.body
+        );
+        if (!task) {
+          res.status(404).json({ error: "No task found" });
+        } else {
+          res.status(200).json({ message: "Task updated successfully." });
+        }
+      } else if (role === "admin") {
+        res.status(400).json({ error: "Admin can not get task." });
+      }
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        res.status(400).json({ error: error.message });
+      } else if (error instanceof DatabaseError) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "An unexpected error occurred" });
+      }
+    }
+  };
 
   // ************** Delete Task **************
   deleteTask = async (req: Request, res: Response) => {
