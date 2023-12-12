@@ -38,8 +38,6 @@ export class FilesRepo {
                         this.queries.pushFileIdInTask,
                         [[file_url], file.task_id],
                         (error, results) => {
-                          console.log("===> results", results);
-                          console.log("===> error 1", error);
                           if (error) {
                             reject(error);
                           } else {
@@ -53,13 +51,6 @@ export class FilesRepo {
               }
             }
           );
-          //   const file_type = file.file_type;
-
-          //   TaskModel.findByIdAndUpdate(file.task_id, {
-          //     $push: {
-          //       files_url: `${file_type}/${file_id}`,
-          //     },
-          //   });
         }
       } catch (error) {
         console.log("Error uploading file: ", error);
@@ -68,33 +59,50 @@ export class FilesRepo {
     });
   }
 
-  async getFileFromDB(id: any) {
-    try {
-      const file = await FileModel.findById({
-        _id: id,
-      });
-      // const base64_string = file?.file_base64;
-      return file;
-    } catch (error) {
-      console.log("Error fetching task: ", error);
-      throw new Error("Could not fetch task");
-    }
-  }
-
-  async deleteFileFromDB(id: string) {
-    try {
-      const file_exist = await FileModel.findById({
-        _id: id,
-      });
-      if (file_exist) {
-        const file = await FileModel.findOneAndDelete();
-        return true;
-      } else {
-        return false;
+  getFileFromDB(id: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      try {
+        pool.query(
+          this.queries.getFileById,
+          [id],
+          (error, results) => {
+            if (!results.rows[0]) reject;
+            resolve(results.rows[0]);
+          }
+        );
+      } catch (error) {
+        console.log("Error fetching file: ", error);
+        throw new Error("Could not fetch file");
       }
-    } catch (error) {
-      console.log("Error deleting file: ", error);
-      throw new Error("Could not delete file");
-    }
+    });
+  }
+  deleteFileFromDB(id: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      try {
+        pool.query(
+          this.queries.getFileById,
+          [id],
+          (error, results) => {
+            const no_file_found = !results.rows.length;
+            if (no_file_found) {
+              resolve(false);
+            } else {
+              pool.query(
+                this.queries.deleteFile,
+                [id],
+                (error, results) => {
+                  if (error) reject();
+                  resolve(results);
+                }
+              );
+            }
+          }
+        );
+      } catch (error) {
+        reject(error);
+        console.log("Error deleting file: ", error);
+        throw new Error("Could not delete file");
+      }
+    });
   }
 }

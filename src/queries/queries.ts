@@ -25,4 +25,6 @@ export class Queries {
     "INSERT INTO files (task_id,file_name,file_type,file_ext,file_base64) VALUES ($1, $2, $3, $4,$5) RETURNING id";
   pushFileIdInTask =
     "UPDATE tasks SET files_url = files_url || $1 WHERE id = $2";
+  getFileById = "SELECT * FROM files WHERE id = $1";
+  deleteFile = "DELETE FROM files WHERE id = $1";
 }

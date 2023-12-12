@@ -40,9 +40,7 @@ class FileController {
           res.status(400).json({ error: "file and task_id are required" });
           return;
         } else {
-          const response: any = await this.myFile.uploadFilesInDB(
-            files_body
-          );
+          const response: any = await this.myFile.uploadFilesInDB(files_body);
           if (!response) {
             return res.status(409).json({ error: "Task not found" });
           } else {
@@ -53,8 +51,6 @@ class FileController {
         res.status(400).json({ error: "Admin can not upload files." });
       }
     } catch (error) {
-      console.log("===> error", error)
-
       if (error instanceof ValidationError) {
         res.status(400).json({ error: error.message });
       } else if (error instanceof DatabaseError) {
@@ -69,9 +65,9 @@ class FileController {
   getFile = async (req: Request, res: Response) => {
     try {
       const user_id = "65604c8d3e58477395d6a17c";
-      // const user_id = (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
       const role = "user";
-      // const role = "user" (req.headers.decoded_token as { role?: string })?.role ?? null;
+      // const user_id = (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
+      // const role = (req.headers.decoded_token as { role?: string })?.role ?? null;
       if (role === "user") {
         const response = await this.myFile.getFileFromDB(req.params.id);
         if (!response) {
