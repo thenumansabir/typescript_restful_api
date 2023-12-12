@@ -53,7 +53,8 @@ class FileController {
         res.status(400).json({ error: "Admin can not upload files." });
       }
     } catch (error) {
-      console.log("Error: ",error)
+      console.log("===> error", error)
+
       if (error instanceof ValidationError) {
         res.status(400).json({ error: error.message });
       } else if (error instanceof DatabaseError) {

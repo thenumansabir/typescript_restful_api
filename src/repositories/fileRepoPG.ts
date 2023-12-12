@@ -30,17 +30,24 @@ export class FilesRepo {
                     file.file_base64,
                   ],
                   (error, results) => {
-                    if (error) reject(error);
-                    pool.query(
-                      this.queries.pushFileIdInTask,
-                      [results.rows[0].id, file.task_id],
-                      (error, results) => {
-                        console.log("===> results", results)
-                        console.log("===> error", results)
-                        if (error) reject(error);
-                        resolve(results);
-                      }
-                    );
+                    if (error) {
+                      reject(error);
+                    } else {
+                      const file_url = `${file.file_type}/${results.rows[0].id}`;
+                      pool.query(
+                        this.queries.pushFileIdInTask,
+                        [[file_url], file.task_id],
+                        (error, results) => {
+                          console.log("===> results", results);
+                          console.log("===> error 1", error);
+                          if (error) {
+                            reject(error);
+                          } else {
+                            resolve(results);
+                          }
+                        }
+                      );
+                    }
                   }
                 );
               }
