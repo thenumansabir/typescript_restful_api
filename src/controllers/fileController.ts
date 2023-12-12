@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-// import { FilesRepo } from "../repositories/fileRepositories";
-import { FilesRepo } from "../repositories/fileRepoPG";
 import { ValidationError, DatabaseError } from "../errorHandlers";
+import { FilesRepoMongo } from "../repositories/file/fileRepoMongo";
+import { FilesRepoPG } from "../repositories/file/fileRepoPG";
+import {IFilesRepo} from "../repositories/file/IFileRepo"
 
 class FileController {
-  private myFile: FilesRepo;
-  constructor(fileRepo: FilesRepo) {
+  private myFile:IFilesRepo;
+  constructor(fileRepo: IFilesRepo) {
     this.myFile = fileRepo;
   }
   // ************** Upload Files *************
@@ -128,4 +129,8 @@ class FileController {
   };
 }
 //  data:image/png;base64,{ENCODED_STRING}
-export default new FileController(new FilesRepo());
+export default new FileController(
+  process.env.DATABASE_TYPE == "mongoDB"
+    ? new FilesRepoMongo()
+    : new FilesRepoPG()
+);

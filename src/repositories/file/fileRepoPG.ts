@@ -1,12 +1,11 @@
-import { FileModel } from "./../models/fileModels";
-import { TaskModel } from "../models/taskModels";
-import pool from "../db";
-import { Queries } from "../queries/queries";
+import pool from "../../postgreSQL";
+import { Queries } from "../../queries/queries";
 import { ObjectId } from "mongodb";
+import { IFilesRepo } from "./IFileRepo";
 
 const yourObjectId = new ObjectId();
 
-export class FilesRepo {
+export class FilesRepoPG implements IFilesRepo{
   queries = new Queries();
 
   uploadFilesInDB(files: any[]): Promise<any> {

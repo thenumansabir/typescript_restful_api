@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
-import pool from "../db";
-import { Queries } from "../queries/queries";
+import pool from "../../postgreSQL";
+import { Queries } from "../../queries/queries";
 
-export class UsersRepo {
+export class UsersRepoPG {
   queries = new Queries();
 
   userRegistration(body: any): Promise<any> {

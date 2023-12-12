@@ -1,7 +1,7 @@
-import pool from "../db";
-import { Queries } from "../queries/queries";
+import pool from "../../postgreSQL";
+import { Queries } from "../../queries/queries";
 
-export class TasksRepo {
+export class TasksRepoPG {
   queries = new Queries();
 
   createTaskInDB(body: any): Promise<any> {

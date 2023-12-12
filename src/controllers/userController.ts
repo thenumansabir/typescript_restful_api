@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
-// import { UsersRepo } from "../repositories/userRepositories";
-import { UsersRepo } from "../repositories/userRepoPG";
+import { UsersRepoMongo } from "../repositories/user/userRepoMongo";
+import { UsersRepoPG } from "../repositories/user/userRepoPG";
+import { IUsersRepo } from "./../repositories/user/IUserRepo";
 import { ValidationError, DatabaseError } from "../errorHandlers";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { JWT_SECRET } from "../config/config.services";
 
 class UserController {
-  private myUser: UsersRepo;
-  constructor(userRepo: UsersRepo) {
+  private myUser: IUsersRepo;
+  constructor(userRepo: IUsersRepo) {
     this.myUser = userRepo;
   }
 
@@ -49,33 +50,34 @@ class UserController {
       }
 
       const user = await this.myUser.userLogin(req.body);
+      console.log(`user::${user}`)
       if (!user) {
         return res.status(404).json({ error: "User not found" });
+      } else {
+        bcrypt.compare(req.body.password, user.password, (err, result) => {
+          if (err) {
+            return res
+              .status(500)
+              .json({ error: "An unexpected error occurred" });
+          }
+
+          if (result) {
+            const id: any = user._id ? "_id" : "id";
+            const token = jwt.sign(
+              { email: user.email, user_id: user.id, role: user.role },
+              JWT_SECRET,
+              {
+                expiresIn: "1h",
+              }
+            );
+            return res
+              .status(201)
+              .json({ message: "User login successfully", token: token });
+          }
+
+          return res.status(401).json({ error: "Incorrect Password" });
+        });
       }
-
-      bcrypt.compare(req.body.password, user.password, (err, result) => {
-        if (err) {
-          return res
-            .status(500)
-            .json({ error: "An unexpected error occurred" });
-        }
-
-        if (result) {
-          const id:any = user._id ? '_id' : 'id'
-          const token = jwt.sign(
-            { email: user.email, user_id: user.id, role: user.role },
-            JWT_SECRET,
-            {
-              expiresIn: "1h",
-            }
-          );
-          return res
-            .status(201)
-            .json({ message: "User login successfully", token: token });
-        }
-
-        return res.status(401).json({ error: "Incorrect Password" });
-      });
     } catch (error) {
       if (error instanceof ValidationError) {
         res.status(400).json({ error: error.message });
@@ -195,4 +197,8 @@ class UserController {
   };
 }
 
-export default new UserController(new UsersRepo());
+export default new UserController(
+  process.env.DATABASE_TYPE == "mongoDB"
+    ? new UsersRepoMongo()
+    : new UsersRepoPG()
+);

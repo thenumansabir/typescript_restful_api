@@ -1,8 +1,9 @@
+import "./config/dotenv.config";
 import express from "express";
 import cors from "cors";
 import bodyPaser from "body-parser";
 import router from "./routes";
-import "./database";
+import "./mongoDB";
 
 const app = express();
 

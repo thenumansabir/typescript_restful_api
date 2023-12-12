@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-// import { TasksRepo } from "../repositories/taskRepositories";
-import { TasksRepo } from "../repositories/taskRepoPG";
+import { TasksRepoMongo } from "../repositories/task/taskRepoMongo";
+import { TasksRepoPG } from "../repositories/task/taskRepoPG";
+import { ITasksRepo } from "../repositories/task/ITaskRepo";
 import { ValidationError, DatabaseError } from "../errorHandlers";
 
 class TaskController {
-  private myTask: TasksRepo;
-  constructor(taskRepo: TasksRepo) {
+  private myTask: ITasksRepo;
+  constructor(taskRepo: ITasksRepo) {
     this.myTask = taskRepo;
   }
   // ************** Create Task *************
@@ -179,4 +180,8 @@ class TaskController {
   };
 }
 //  data:image/png;base64,{ENCODED_STRING}
-export default new TaskController(new TasksRepo());
+export default new TaskController(
+  process.env.DATABASE_TYPE == "mongoDB"
+    ? new TasksRepoMongo()
+    : new TasksRepoPG()
+);
