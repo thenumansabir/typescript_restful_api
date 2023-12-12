@@ -62,14 +62,10 @@ export class FilesRepo {
   getFileFromDB(id: any): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        pool.query(
-          this.queries.getFileById,
-          [id],
-          (error, results) => {
-            if (!results.rows[0]) reject;
-            resolve(results.rows[0]);
-          }
-        );
+        pool.query(this.queries.getFileById, [id], (error, results) => {
+          if (!results.rows[0]) reject;
+          resolve(results.rows[0]);
+        });
       } catch (error) {
         console.log("Error fetching file: ", error);
         throw new Error("Could not fetch file");
@@ -79,25 +75,17 @@ export class FilesRepo {
   deleteFileFromDB(id: string): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        pool.query(
-          this.queries.getFileById,
-          [id],
-          (error, results) => {
-            const no_file_found = !results.rows.length;
-            if (no_file_found) {
-              resolve(false);
-            } else {
-              pool.query(
-                this.queries.deleteFile,
-                [id],
-                (error, results) => {
-                  if (error) reject();
-                  resolve(results);
-                }
-              );
-            }
+        pool.query(this.queries.getFileById, [id], (error, results) => {
+          const no_file_found = !results.rows.length;
+          if (no_file_found) {
+            resolve(false);
+          } else {
+            pool.query(this.queries.deleteFile, [id], (error, results) => {
+              if (error) reject();
+              resolve(results);
+            });
           }
-        );
+        });
       } catch (error) {
         reject(error);
         console.log("Error deleting file: ", error);
