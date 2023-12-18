@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UsersRepoMongo } from "../repositories/user/userRepoMongo";
 import { UsersRepoPG } from "../repositories/user/userRepoPG";
+import { UsersRepoPrisma } from "../repositories/user/userRepoPrisma";
 import { IUsersRepo } from "./../repositories/user/IUserRepo";
 import { ValidationError, DatabaseError } from "../errorHandlers";
 import jwt from "jsonwebtoken";
@@ -30,6 +31,7 @@ class UserController {
         }
       }
     } catch (error) {
+      console.log(`Error ===========> ${error}`)
       if (error instanceof ValidationError) {
         res.status(400).json({ error: error.message });
       } else if (error instanceof DatabaseError) {
@@ -50,7 +52,7 @@ class UserController {
       }
 
       const user = await this.myUser.userLogin(req.body);
-      console.log(`user::${user}`)
+      console.log(`user::${user}`);
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       } else {
@@ -200,5 +202,7 @@ class UserController {
 export default new UserController(
   process.env.DATABASE_TYPE == "mongoDB"
     ? new UsersRepoMongo()
-    : new UsersRepoPG()
+    : process.env.DATABASE_TYPE == "postgreSQL"
+    ? new UsersRepoPG()
+    : new UsersRepoPrisma()
 );
