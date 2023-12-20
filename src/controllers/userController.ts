@@ -31,7 +31,6 @@ class UserController {
         }
       }
     } catch (error) {
-      console.log(`Error ===========> ${error}`)
       if (error instanceof ValidationError) {
         res.status(400).json({ error: error.message });
       } else if (error instanceof DatabaseError) {
@@ -52,7 +51,6 @@ class UserController {
       }
 
       const user = await this.myUser.userLogin(req.body);
-      console.log(`user::${user}`);
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       } else {
@@ -134,7 +132,6 @@ class UserController {
         res.status(400).json({ error: "user can not get user." });
       }
     } catch (error) {
-      console.log(error);
       if (error instanceof ValidationError) {
         res.status(400).json({ error: error.message });
       } else if (error instanceof DatabaseError) {

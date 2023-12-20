@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -6,24 +7,22 @@ export class UsersRepoPrisma {
   userRegistration(body: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const user_exists = await prisma.user.findUnique({
+        const user_exists: any = await prisma.user.findUnique({
           where: { email: body.email },
         });
         if (user_exists) {
-          console.log(user_exists)
-          resolve(false);
+          resolve(user_exists);
         } else {
           const user = await prisma.user.create({
             data: {
               email: body.email,
-              password: body.password,
+              password: await bcrypt.hash(body.password, 10),
               role: body.role,
               status: "active",
             },
           });
-          console.log(user)
-          if (user) resolve(true);
-          else resolve(false);
+          if (user) resolve(false);
+          else resolve(true);
         }
       } catch (error) {
         reject(error);
@@ -34,8 +33,13 @@ export class UsersRepoPrisma {
   }
 
   userLogin(body: any): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
+        const user = await prisma.user.findUnique({
+          where: { email: body.email, status: "active" },
+        });
+        if (user) resolve(user);
+        resolve(false);
       } catch (error) {
         reject(error);
         console.log("Error logging user: ", error);
@@ -45,8 +49,11 @@ export class UsersRepoPrisma {
   }
 
   getAllUsersFromDB(): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
+        const user = await prisma.user.findMany();
+        if (user) resolve(user);
+        resolve(false);
       } catch (error) {
         reject(error);
         console.log("Error fetching users: ", error);
@@ -56,8 +63,13 @@ export class UsersRepoPrisma {
   }
 
   getUserFromDB(id: any): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
+        const user = await prisma.user.findUnique({
+          where: { id: parseInt(id) },
+        });
+        if (user) resolve(user);
+        resolve(false);
       } catch (error) {
         reject(error);
         console.log("Error fetching users: ", error);
@@ -69,6 +81,14 @@ export class UsersRepoPrisma {
   updateUserInDB(id: any, body: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
+        const user = await prisma.user.update({
+          where: { id: parseInt(id) },
+          data: {
+            status: body.status,
+          },
+        });
+        if (user) resolve(user);
+        resolve(false);
       } catch (error) {
         reject(error);
         console.log("Error updating user: ", error);
@@ -78,8 +98,18 @@ export class UsersRepoPrisma {
   }
 
   deleteUserFromDB(id: any): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
+        const user_exists: any = await prisma.user.findUnique({
+          where: { id: parseInt(id) },
+        });
+        if (user_exists) {
+          const user = await prisma.user.delete({
+            where: { id: parseInt(id) },
+          });
+          resolve(user);
+        }
+        resolve(false);
       } catch (error) {
         reject(error);
         console.log("Error deleting users: ", error);
