@@ -1,7 +1,8 @@
 import pool from "../../postgreSQL";
 import { Queries } from "../../queries/queries";
+import { ITasksRepo } from './ITaskRepo';
 
-export class TasksRepoPG {
+export class TasksRepoPG implements ITasksRepo {
   queries = new Queries();
 
   createTaskInDB(body: any): Promise<any> {

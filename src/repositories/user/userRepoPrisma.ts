@@ -1,9 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { IUsersRepo } from "./IUserRepo";
 
 const prisma = new PrismaClient();
 
-export class UsersRepoPrisma {
+export class UsersRepoPrisma implements IUsersRepo {
   userRegistration(body: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {

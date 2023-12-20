@@ -1,8 +1,9 @@
 import { PrismaClient } from "@prisma/client";
+import { ITasksRepo } from './ITaskRepo';
 
 const prisma = new PrismaClient();
 
-export class TasksRepoPrisma {
+export class TasksRepoPrisma implements ITasksRepo{
   createTaskInDB(body: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {

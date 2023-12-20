@@ -5,7 +5,7 @@ import { IFilesRepo } from "./IFileRepo";
 
 const yourObjectId = new ObjectId();
 
-export class FilesRepoPG implements IFilesRepo{
+export class FilesRepoPG implements IFilesRepo {
   queries = new Queries();
 
   uploadFilesInDB(files: any[]): Promise<any> {

@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { ValidationError, DatabaseError } from "../errorHandlers";
 import { FilesRepoMongo } from "../repositories/file/fileRepoMongo";
 import { FilesRepoPG } from "../repositories/file/fileRepoPG";
-import {IFilesRepo} from "../repositories/file/IFileRepo"
+import { FilesRepoPrisma } from "../repositories/file/fileRepoPrisma";
+import { IFilesRepo } from "../repositories/file/IFileRepo";
 
 class FileController {
-  private myFile:IFilesRepo;
+  private myFile: IFilesRepo;
   constructor(fileRepo: IFilesRepo) {
     this.myFile = fileRepo;
   }
@@ -132,5 +133,7 @@ class FileController {
 export default new FileController(
   process.env.DATABASE_TYPE == "mongoDB"
     ? new FilesRepoMongo()
-    : new FilesRepoPG()
+    : process.env.DATABASE_TYPE == "postgreSQL"
+    ? new FilesRepoPG()
+    : new FilesRepoPrisma()
 );

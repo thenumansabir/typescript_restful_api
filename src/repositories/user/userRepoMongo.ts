@@ -1,8 +1,9 @@
 import { UserRole } from "../../models/userModels";
 import { UserModel } from "../../models/userModels";
+import { IUsersRepo } from "./IUserRepo";
 import bcrypt from "bcrypt";
 
-export class UsersRepoMongo {
+export class UsersRepoMongo implements IUsersRepo {
   userRegistration(body: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -36,7 +37,7 @@ export class UsersRepoMongo {
     });
   }
 
-  async userLogin(body: any): Promise<any> {
+  userLogin(body: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const user: any = await UserModel.findOne({
@@ -55,7 +56,7 @@ export class UsersRepoMongo {
     });
   }
 
-  async getAllUsersFromDB(): Promise<any> {
+  getAllUsersFromDB(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const users = await UserModel.find({ role: "user" });
@@ -68,7 +69,7 @@ export class UsersRepoMongo {
     });
   }
 
-  async getUserFromDB(id: any): Promise<any> {
+ getUserFromDB(id: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const user = await UserModel.find().and([
@@ -84,7 +85,7 @@ export class UsersRepoMongo {
     });
   }
 
-  async updateUserInDB(id: any, body: any): Promise<any> {
+  updateUserInDB(id: any, body: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const user_exists = await UserModel.find().and([
@@ -110,7 +111,7 @@ export class UsersRepoMongo {
     });
   }
 
-  async deleteUserFromDB(id: any): Promise<any> {
+  deleteUserFromDB(id: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const user_exists = await UserModel.find().and([

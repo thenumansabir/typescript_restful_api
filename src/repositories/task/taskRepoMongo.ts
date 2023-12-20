@@ -1,6 +1,8 @@
+import { ITasksRepo } from './ITaskRepo';
 import { TaskModel } from "../../models/taskModels";
 
-export class TasksRepoMongo {
+export class TasksRepoMongo implements ITasksRepo {
+  
   async createTaskInDB(body: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
