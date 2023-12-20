@@ -51,7 +51,11 @@ export class UsersRepoPrisma {
   getAllUsersFromDB(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const user = await prisma.user.findMany();
+        const user = await prisma.user.findMany({
+          include: {
+            tasks: true,
+          },
+        });
         if (user) resolve(user);
         resolve(false);
       } catch (error) {
@@ -67,6 +71,9 @@ export class UsersRepoPrisma {
       try {
         const user = await prisma.user.findUnique({
           where: { id: parseInt(id) },
+          include: {
+            tasks: true,
+          },
         });
         if (user) resolve(user);
         resolve(false);

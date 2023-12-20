@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { TasksRepoMongo } from "../repositories/task/taskRepoMongo";
 import { TasksRepoPG } from "../repositories/task/taskRepoPG";
+import { TasksRepoPrisma } from './../repositories/task/taskRepoPrisma';
 import { ITasksRepo } from "../repositories/task/ITaskRepo";
 import { ValidationError, DatabaseError } from "../errorHandlers";
 
@@ -183,5 +184,7 @@ class TaskController {
 export default new TaskController(
   process.env.DATABASE_TYPE == "mongoDB"
     ? new TasksRepoMongo()
-    : new TasksRepoPG()
+    : process.env.DATABASE_TYPE == "postgreSQL"
+    ? new TasksRepoPG()
+    : new TasksRepoPrisma()
 );
