@@ -4,9 +4,10 @@ import { UsersRepoPG } from "../repositories/user/userRepoPG";
 import { UsersRepoPrisma } from "../repositories/user/userRepoPrisma";
 import { IUsersRepo } from "./../repositories/user/IUserRepo";
 import { ValidationError, DatabaseError } from "../errorHandlers";
+import { JWT_SECRET } from "../config/config.services";
+import { validate as isUUID } from "uuid";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { JWT_SECRET } from "../config/config.services";
 
 class UserController {
   private myUser: IUsersRepo;
@@ -121,15 +122,20 @@ class UserController {
     try {
       const role =
         (req.headers.decoded_token as { role?: string })?.role ?? null;
-      if (role === "admin") {
-        const user = await this.myUser.getUserFromDB(req.params.id);
-        if (!user || user === null || user.length === 0) {
-          res.status(404).json({ error: "No user found" });
-        } else {
-          res.status(200).json(user);
+      const isValidUUID: boolean = isUUID(req.params.id);
+      if (isValidUUID) {
+        if (role === "admin") {
+          const user = await this.myUser.getUserFromDB(req.params.id);
+          if (!user || user === null || user.length === 0) {
+            res.status(404).json({ error: "No user found" });
+          } else {
+            res.status(200).json(user);
+          }
+        } else if (role === "user") {
+          res.status(400).json({ error: "user can not get user." });
         }
-      } else if (role === "user") {
-        res.status(400).json({ error: "user can not get user." });
+      } else {
+        res.status(403).json({ error: "id must be UUID" });
       }
     } catch (error) {
       if (error instanceof ValidationError) {
@@ -147,15 +153,23 @@ class UserController {
     try {
       const role =
         (req.headers.decoded_token as { role?: string })?.role ?? null;
-      if (role === "admin") {
-        const user = await this.myUser.updateUserInDB(req.params.id, req.body);
-        if (!user) {
-          res.status(404).json({ error: "No user found" });
-        } else {
-          res.status(200).json({ message: "User successfully updated." });
+      const isValidUUID: boolean = isUUID(req.params.id);
+      if (isValidUUID) {
+        if (role === "admin") {
+          const user = await this.myUser.updateUserInDB(
+            req.params.id,
+            req.body
+          );
+          if (!user) {
+            res.status(404).json({ error: "No user found" });
+          } else {
+            res.status(200).json({ message: "User successfully updated." });
+          }
+        } else if (role === "user") {
+          res.status(400).json({ error: "user can not update user." });
         }
-      } else if (role === "user") {
-        res.status(400).json({ error: "user can not update user." });
+      } else {
+        res.status(403).json({ error: "id must be UUID" });
       }
     } catch (error) {
       if (error instanceof ValidationError) {
@@ -173,15 +187,20 @@ class UserController {
     try {
       const role =
         (req.headers.decoded_token as { role?: string })?.role ?? null;
-      if (role === "admin") {
-        const user = await this.myUser.deleteUserFromDB(req.params.id);
-        if (!user || user === null || user.length === 0) {
-          res.status(404).json({ error: "No user found" });
-        } else {
-          res.status(200).json({ message: "User deleted successfully" });
+      const isValidUUID: boolean = isUUID(req.params.id);
+      if (isValidUUID) {
+        if (role === "admin") {
+          const user = await this.myUser.deleteUserFromDB(req.params.id);
+          if (!user || user === null || user.length === 0) {
+            res.status(404).json({ error: "No user found" });
+          } else {
+            res.status(200).json({ message: "User deleted successfully" });
+          }
+        } else if (role === "user") {
+          res.status(400).json({ error: "user can not delete user." });
         }
-      } else if (role === "user") {
-        res.status(400).json({ error: "user can not delete user." });
+      } else {
+        res.status(403).json({ error: "id must be UUID" });
       }
     } catch (error) {
       console.log(error);

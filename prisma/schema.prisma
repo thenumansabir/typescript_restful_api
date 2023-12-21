@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
+  id       String @id @default(uuid())
   email    String @unique
   password String
   status   String
@@ -20,19 +20,19 @@ model User {
 }
 
 model Task {
-  id               Int     @id @default(autoincrement())
+  id               String  @id @default(uuid())
   task_title       String  @unique
   task_description String
   is_completed     Boolean
   user             User    @relation(fields: [user_id], references: [id])
-  user_id          Int
+  user_id          String
   files_url        File[]
 }
 
 model File {
-  id          Int    @id @default(autoincrement())
+  id          String @id @default(uuid())
   task        Task   @relation(fields: [task_id], references: [id])
-  task_id     Int
+  task_id     String
   file_name   String
   file_type   String
   file_ext    String

@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { TasksRepoMongo } from "../repositories/task/taskRepoMongo";
 import { TasksRepoPG } from "../repositories/task/taskRepoPG";
-import { TasksRepoPrisma } from './../repositories/task/taskRepoPrisma';
+import { TasksRepoPrisma } from "./../repositories/task/taskRepoPrisma";
 import { ITasksRepo } from "../repositories/task/ITaskRepo";
 import { ValidationError, DatabaseError } from "../errorHandlers";
+import { validate as isUUID } from "uuid";
 
 class TaskController {
   private myTask: ITasksRepo;
@@ -94,19 +95,24 @@ class TaskController {
   // ************** Get Single Task **************
   getTask = async (req: Request, res: Response) => {
     try {
-      const user_id =
+      const user_id: any =
         (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
       const role =
         (req.headers.decoded_token as { role?: string })?.role ?? null;
-      if (role === "user") {
-        const task = await this.myTask.getTaskFromDB(req.params.id, user_id);
-        if (!task) {
-          res.status(404).json({ error: "No task found" });
-        } else {
-          res.status(200).json(task);
+      const isValidUUID: boolean = isUUID(req.params.id);
+      if (isValidUUID) {
+        if (role === "user") {
+          const task = await this.myTask.getTaskFromDB(req.params.id, user_id);
+          if (!task) {
+            res.status(404).json({ error: "No task found" });
+          } else {
+            res.status(200).json(task);
+          }
+        } else if (role === "admin") {
+          res.status(400).json({ error: "Admin can not get task." });
         }
-      } else if (role === "admin") {
-        res.status(400).json({ error: "Admin can not get task." });
+      } else {
+        res.status(403).json({ error: "id must be UUID" });
       }
     } catch (error) {
       if (error instanceof ValidationError) {
@@ -126,19 +132,24 @@ class TaskController {
         (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
       const role =
         (req.headers.decoded_token as { role?: string })?.role ?? null;
-      if (role === "user") {
-        const task = await this.myTask.updateTaskInDB(
-          req.params.id,
-          user_id,
-          req.body
-        );
-        if (!task) {
-          res.status(404).json({ error: "No task found" });
-        } else {
-          res.status(200).json({ message: "Task updated successfully." });
+      const isValidUUID: boolean = isUUID(req.params.id);
+      if (isValidUUID) {
+        if (role === "user") {
+          const task = await this.myTask.updateTaskInDB(
+            req.params.id,
+            user_id,
+            req.body
+          );
+          if (!task) {
+            res.status(404).json({ error: "No task found" });
+          } else {
+            res.status(200).json({ message: "Task updated successfully." });
+          }
+        } else if (role === "admin") {
+          res.status(400).json({ error: "Admin can not get task." });
         }
-      } else if (role === "admin") {
-        res.status(400).json({ error: "Admin can not get task." });
+      } else {
+        res.status(403).json({ error: "id must be UUID" });
       }
     } catch (error) {
       if (error instanceof ValidationError) {
@@ -158,15 +169,23 @@ class TaskController {
         (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
       const role =
         (req.headers.decoded_token as { role?: string })?.role ?? null;
-      if (role === "user") {
-        const task = await this.myTask.deleteTaskFromDB(req.params.id, user_id);
-        if (!task) {
-          res.status(404).json({ error: "No task found" });
-        } else {
-          res.status(200).json({ message: "Task deleted successfully" });
+      const isValidUUID: boolean = isUUID(req.params.id);
+      if (isValidUUID) {
+        if (role === "user") {
+          const task = await this.myTask.deleteTaskFromDB(
+            req.params.id,
+            user_id
+          );
+          if (!task) {
+            res.status(404).json({ error: "No task found" });
+          } else {
+            res.status(200).json({ message: "Task deleted successfully" });
+          }
+        } else if (role === "admin") {
+          res.status(400).json({ error: "Admin can not delete task." });
         }
-      } else if (role === "admin") {
-        res.status(400).json({ error: "Admin can not delete task." });
+      } else {
+        res.status(403).json({ error: "id must be UUID" });
       }
     } catch (error) {
       console.log(error);

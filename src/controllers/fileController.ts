@@ -4,6 +4,7 @@ import { FilesRepoMongo } from "../repositories/file/fileRepoMongo";
 import { FilesRepoPG } from "../repositories/file/fileRepoPG";
 import { FilesRepoPrisma } from "../repositories/file/fileRepoPrisma";
 import { IFilesRepo } from "../repositories/file/IFileRepo";
+import { validate as isUUID } from "uuid";
 
 class FileController {
   private myFile: IFilesRepo;
@@ -33,24 +34,29 @@ class FileController {
         };
         files_body.push(body);
       });
-      if (role === "user") {
-        if (
-          req.body.task_id === undefined ||
-          !req.files ||
-          req.files.length === 0
-        ) {
-          res.status(400).json({ error: "file and task_id are required" });
-          return;
-        } else {
-          const response: any = await this.myFile.uploadFilesInDB(files_body);
-          if (!response) {
-            return res.status(409).json({ error: "Task not found" });
+      const isValidUUID: boolean = isUUID(req.body.task_id);
+      if (isValidUUID) {
+        if (role === "user") {
+          if (
+            req.body.task_id === undefined ||
+            !req.files ||
+            req.files.length === 0
+          ) {
+            res.status(400).json({ error: "file and task_id are required" });
+            return;
           } else {
-            res.status(201).json({ message: "File uploaded successfully" });
+            const response: any = await this.myFile.uploadFilesInDB(files_body);
+            if (!response) {
+              return res.status(409).json({ error: "Task not found" });
+            } else {
+              res.status(201).json({ message: "File uploaded successfully" });
+            }
           }
+        } else if (role === "admin") {
+          res.status(400).json({ error: "Admin can not upload files." });
         }
-      } else if (role === "admin") {
-        res.status(400).json({ error: "Admin can not upload files." });
+      } else {
+        res.status(403).json({ error: "Task ID must be UUID" });
       }
     } catch (error) {
       if (error instanceof ValidationError) {
@@ -70,25 +76,30 @@ class FileController {
       const role = "user";
       // const user_id = (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
       // const role = (req.headers.decoded_token as { role?: string })?.role ?? null;
-      if (role === "user") {
-        const response = await this.myFile.getFileFromDB(req.params.id);
-        if (!response) {
-          res.status(404).json({ error: "No file found" });
-        } else {
-          const base64String = response.file_base64;
-          const mimetype = `${response.file_type}/${response.file_ext}`;
-          const filename = "download";
+      const isValidUUID: boolean = isUUID(req.params.id);
+      if (isValidUUID) {
+        if (role === "user") {
+          const response = await this.myFile.getFileFromDB(req.params.id);
+          if (!response) {
+            res.status(404).json({ error: "No file found" });
+          } else {
+            const base64String = response.file_base64;
+            const mimetype = `${response.file_type}/${response.file_ext}`;
+            const filename = "download";
 
-          res.setHeader("Content-Type", mimetype);
-          res.setHeader(
-            "Content-Disposition",
-            `attachment; filename=${filename}.${response.file_ext}`
-          );
-          res.send(Buffer.from(base64String, "base64"));
-          // res.status(200).json(response);
+            res.setHeader("Content-Type", mimetype);
+            res.setHeader(
+              "Content-Disposition",
+              `attachment; filename=${filename}.${response.file_ext}`
+            );
+            res.send(Buffer.from(base64String, "base64"));
+            // res.status(200).json(response);
+          }
+        } else if (role === "admin") {
+          res.status(400).json({ error: "Admin can not get file." });
         }
-      } else if (role === "admin") {
-        res.status(400).json({ error: "Admin can not get file." });
+      } else {
+        res.status(403).json({ error: "id must be UUID" });
       }
     } catch (error) {
       if (error instanceof ValidationError) {
@@ -108,15 +119,20 @@ class FileController {
         (req.headers.decoded_token as { user_id?: string })?.user_id ?? null;
       const role =
         (req.headers.decoded_token as { role?: string })?.role ?? null;
-      if (role === "user") {
-        const response = await this.myFile.deleteFileFromDB(req.params.id);
-        if (!response) {
-          res.status(404).json({ error: "No file found" });
-        } else {
-          res.status(200).json({ message: "File deleted successfully" });
+      const isValidUUID: boolean = isUUID(req.params.id);
+      if (isValidUUID) {
+        if (role === "user") {
+          const response = await this.myFile.deleteFileFromDB(req.params.id);
+          if (!response) {
+            res.status(404).json({ error: "No file found" });
+          } else {
+            res.status(200).json({ message: "File deleted successfully" });
+          }
+        } else if (role === "admin") {
+          res.status(400).json({ error: "Admin can not delete file." });
         }
-      } else if (role === "admin") {
-        res.status(400).json({ error: "Admin can not delete file." });
+      } else {
+        res.status(403).json({ error: "id must be UUID" });
       }
     } catch (error) {
       if (error instanceof ValidationError) {

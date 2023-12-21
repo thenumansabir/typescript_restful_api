@@ -9,12 +9,12 @@ export class FilesRepoPrisma implements IFilesRepo {
       try {
         for (const f of files) {
           const task_exists = await prisma.task.findUnique({
-            where: { id: parseInt(f.task_id) },
+            where: { id: f.task_id },
           });
           if (task_exists) {
             const file = await prisma.file.create({
               data: {
-                task: { connect: { id: parseInt(f.task_id) } },
+                task: { connect: { id: f.task_id } },
                 file_name: f.file_name,
                 file_type: f.file_type,
                 file_ext: f.file_ext,
@@ -36,7 +36,7 @@ export class FilesRepoPrisma implements IFilesRepo {
     return new Promise(async (resolve, reject) => {
       try {
         const file = await prisma.file.findUnique({
-          where: { id: parseInt(id) },
+          where: { id: id },
         });
         if (file) resolve(file);
         resolve(false);
@@ -50,11 +50,11 @@ export class FilesRepoPrisma implements IFilesRepo {
     return new Promise(async (resolve, reject) => {
       try {
         const file_exists = await prisma.file.findUnique({
-          where: { id: parseInt(id) },
+          where: { id: id },
         });
         if (file_exists) {
           const file = await prisma.file.delete({
-            where: { id: parseInt(id) },
+            where: { id: id },
           });
           resolve(file);
         }

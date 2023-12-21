@@ -34,7 +34,7 @@ export class TasksRepoPrisma implements ITasksRepo{
     return new Promise(async (resolve, reject) => {
       try {
         const tasks = await prisma.task.findMany({
-          where: { user_id: parseInt(id) },
+          where: { user_id: id },
         });
         resolve(tasks);
       } catch (error) {
@@ -48,7 +48,7 @@ export class TasksRepoPrisma implements ITasksRepo{
     return new Promise(async (resolve, reject) => {
       try {
         const task = await prisma.task.findUnique({
-          where: { id: parseInt(id), user_id: user_id },
+          where: { id: id, user_id: user_id },
         });
         if (task) resolve(task);
         resolve(false);
@@ -63,11 +63,11 @@ export class TasksRepoPrisma implements ITasksRepo{
     return new Promise(async (resolve, reject) => {
       try {
         const task_exists = await prisma.task.findUnique({
-          where: { id: parseInt(id), user_id: user_id },
+          where: { id: id, user_id: user_id },
         });
         if (task_exists) {
           const task = await prisma.task.update({
-            where: { id: parseInt(id), user_id: user_id },
+            where: { id: id, user_id: user_id },
             data: {
               task_title: body.task_title,
               task_description: body.task_description,
@@ -87,11 +87,11 @@ export class TasksRepoPrisma implements ITasksRepo{
     return new Promise(async (resolve, reject) => {
       try {
         const task_exists = await prisma.task.findUnique({
-          where: { id: parseInt(id), user_id: user_id },
+          where: { id: id, user_id: user_id },
         });
         if (task_exists) {
           const task = await prisma.task.delete({
-            where: { id: parseInt(id), user_id: user_id },
+            where: { id: id, user_id: user_id },
           });
           resolve(task);
         }

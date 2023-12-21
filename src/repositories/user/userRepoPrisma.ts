@@ -71,7 +71,7 @@ export class UsersRepoPrisma implements IUsersRepo {
     return new Promise(async (resolve, reject) => {
       try {
         const user = await prisma.user.findUnique({
-          where: { id: parseInt(id) },
+          where: { id: id },
           include: {
             tasks: true,
           },
@@ -90,7 +90,7 @@ export class UsersRepoPrisma implements IUsersRepo {
     return new Promise(async (resolve, reject) => {
       try {
         const user = await prisma.user.update({
-          where: { id: parseInt(id) },
+          where: { id: id },
           data: {
             status: body.status,
           },
@@ -109,11 +109,11 @@ export class UsersRepoPrisma implements IUsersRepo {
     return new Promise(async (resolve, reject) => {
       try {
         const user_exists: any = await prisma.user.findUnique({
-          where: { id: parseInt(id) },
+          where: { id: id },
         });
         if (user_exists) {
           const user = await prisma.user.delete({
-            where: { id: parseInt(id) },
+            where: { id: id },
           });
           resolve(user);
         }
