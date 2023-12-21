@@ -11,8 +11,7 @@ export class FilesRepoPrisma implements IFilesRepo {
           const task_exists = await prisma.task.findUnique({
             where: { id: parseInt(f.task_id) },
           });
-          if (task_exists){
-
+          if (task_exists) {
             const file = await prisma.file.create({
               data: {
                 task: { connect: { id: parseInt(f.task_id) } },
@@ -22,7 +21,7 @@ export class FilesRepoPrisma implements IFilesRepo {
                 file_base64: f.file_base64,
               },
             });
-            resolve(file)
+            resolve(file);
           }
           resolve(false);
         }
@@ -34,8 +33,13 @@ export class FilesRepoPrisma implements IFilesRepo {
   }
 
   getFileFromDB(id: any): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
+        const file = await prisma.file.findUnique({
+          where: { id: parseInt(id) },
+        });
+        if (file) resolve(file);
+        resolve(false);
       } catch (error) {
         console.log("Error fetching file: ", error);
         throw new Error("Could not fetch file");
@@ -43,8 +47,18 @@ export class FilesRepoPrisma implements IFilesRepo {
     });
   }
   deleteFileFromDB(id: string): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
+        const file_exists = await prisma.file.findUnique({
+          where: { id: parseInt(id) },
+        });
+        if (file_exists) {
+          const file = await prisma.file.delete({
+            where: { id: parseInt(id) },
+          });
+          resolve(file);
+        }
+        resolve(false);
       } catch (error) {
         reject(error);
         console.log("Error deleting file: ", error);
