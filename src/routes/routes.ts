@@ -1,9 +1,9 @@
 import express from "express";
-import UserController from "./controllers/userController";
-import TaskController from "./controllers/taskController";
-import FileController from "./controllers/fileController";
-import { authenticateToken } from "./middleware/authMiddleware";
-import { upload } from "./middleware/uploadMiddleware";
+import UserController from "../controllers/userController";
+import TaskController from "../controllers/taskController";
+import FileController from "../controllers/fileController";
+import { authenticateToken } from "../middleware/authMiddleware";
+import { upload } from "../middleware/uploadMiddleware";
 
 const router = express.Router();
 // users APIs routes

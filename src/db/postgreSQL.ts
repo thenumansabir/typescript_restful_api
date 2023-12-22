@@ -9,11 +9,8 @@ const poolConfig: PoolConfig = {
 };
 
 const pool = new Pool(poolConfig);
-// pool.connect()
-//   .then(() => {
-//     console.log("Connected to the PostgreSQL");
-//   })
-//   .catch((error) => {
-//     console.error("Error connecting to the PostgreSQL:", error);
-//   });
+// pool.on("connect", () => {
+//   console.log("Connected to the database");
+// });
+
 export default pool;

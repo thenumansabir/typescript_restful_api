@@ -1,4 +1,4 @@
-import pool from "../../postgreSQL";
+import pool from "../../db/postgreSQL";
 import { Queries } from "../../queries/queries";
 import { ObjectId } from "mongodb";
 import { IFilesRepo } from "./IFileRepo";

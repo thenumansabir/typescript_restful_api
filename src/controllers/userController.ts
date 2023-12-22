@@ -3,9 +3,10 @@ import { UsersRepoMongo } from "../repositories/user/userRepoMongo";
 import { UsersRepoPG } from "../repositories/user/userRepoPG";
 import { UsersRepoPrisma } from "../repositories/user/userRepoPrisma";
 import { IUsersRepo } from "./../repositories/user/IUserRepo";
-import { ValidationError, DatabaseError } from "../errorHandlers";
+import { ValidationError, DatabaseError } from "../utils/errorHandlers";
 import { JWT_SECRET } from "../config/config.services";
 import { validate as isUUID } from "uuid";
+import { emailRegex, passwordRegex } from "../utils/regex";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
@@ -21,6 +22,15 @@ class UserController {
       if (!req.body.email && !req.body.password) {
         res.status(400).json({ error: "Email and password are required" });
         return;
+      } else if (!emailRegex.test(req.body.email)) {
+        return res.status(400).json({
+          error: "Invalid email format",
+        });
+      } else if (!passwordRegex.test(req.body.password)) {
+        return res.status(400).json({
+          error:
+            "Pssword must contain at least one uppercase, lovercase,digit, special character and must be 8 characters long",
+        });
       } else {
         const user = await this.myUser.userRegistration(req.body);
         if (user) {
@@ -49,35 +59,44 @@ class UserController {
         return res
           .status(400)
           .json({ error: "Email and password are required" });
-      }
-
-      const user = await this.myUser.userLogin(req.body);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      } else {
-        bcrypt.compare(req.body.password, user.password, (err, result) => {
-          if (err) {
-            return res
-              .status(500)
-              .json({ error: "An unexpected error occurred" });
-          }
-
-          if (result) {
-            const id: any = user._id ? "_id" : "id";
-            const token = jwt.sign(
-              { email: user.email, user_id: user.id, role: user.role },
-              JWT_SECRET,
-              {
-                expiresIn: "1h",
-              }
-            );
-            return res
-              .status(201)
-              .json({ message: "User login successfully", token: token });
-          }
-
-          return res.status(401).json({ error: "Incorrect Password" });
+      } else if (!emailRegex.test(req.body.email)) {
+        return res.status(400).json({
+          error: "Invalid email format",
         });
+      } else if (!passwordRegex.test(req.body.password)) {
+        return res.status(400).json({
+          error:
+            "Pssword must contain at least one uppercase, lovercase,digit, special character and must be 8 characters long",
+        });
+      } else {
+        const user = await this.myUser.userLogin(req.body);
+        if (!user) {
+          return res.status(404).json({ error: "User not found" });
+        } else {
+          bcrypt.compare(req.body.password, user.password, (err, result) => {
+            if (err) {
+              return res
+                .status(500)
+                .json({ error: "An unexpected error occurred" });
+            }
+
+            if (result) {
+              const id: any = user._id ? "_id" : "id";
+              const token = jwt.sign(
+                { email: user.email, user_id: user.id, role: user.role },
+                JWT_SECRET,
+                {
+                  expiresIn: "1h",
+                }
+              );
+              return res
+                .status(201)
+                .json({ message: "User login successfully", token: token });
+            }
+
+            return res.status(401).json({ error: "Incorrect Password" });
+          });
+        }
       }
     } catch (error) {
       if (error instanceof ValidationError) {

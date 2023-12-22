@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ValidationError, DatabaseError } from "../errorHandlers";
+import { ValidationError, DatabaseError } from "../utils/errorHandlers";
 import { FilesRepoMongo } from "../repositories/file/fileRepoMongo";
 import { FilesRepoPG } from "../repositories/file/fileRepoPG";
 import { FilesRepoPrisma } from "../repositories/file/fileRepoPrisma";

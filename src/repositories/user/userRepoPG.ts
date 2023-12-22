@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import pool from "../../postgreSQL";
+import pool from "../../db/postgreSQL";
 import { Queries } from "../../queries/queries";
 import { IUsersRepo } from "./IUserRepo";
 

@@ -1,4 +1,4 @@
-import pool from "../../postgreSQL";
+import pool from "../../db/postgreSQL";
 import { Queries } from "../../queries/queries";
 import { ITasksRepo } from './ITaskRepo';
 

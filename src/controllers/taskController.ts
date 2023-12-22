@@ -3,7 +3,7 @@ import { TasksRepoMongo } from "../repositories/task/taskRepoMongo";
 import { TasksRepoPG } from "../repositories/task/taskRepoPG";
 import { TasksRepoPrisma } from "./../repositories/task/taskRepoPrisma";
 import { ITasksRepo } from "../repositories/task/ITaskRepo";
-import { ValidationError, DatabaseError } from "../errorHandlers";
+import { ValidationError, DatabaseError } from "../utils/errorHandlers";
 import { validate as isUUID } from "uuid";
 
 class TaskController {

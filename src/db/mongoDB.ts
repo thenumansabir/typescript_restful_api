@@ -9,6 +9,6 @@ if (process.env.DATABASE_TYPE == "mongoDB") {
 
   db.on("error", console.error.bind(console, "MonogDB connection error"));
   db.once("open", () => {
-    console.log("===> Connected to mongoDB");
+    console.log("===> Connected to database");
   });
 }
