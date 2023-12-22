@@ -3,7 +3,7 @@ import pool from "../../postgreSQL";
 import { Queries } from "../../queries/queries";
 import { IUsersRepo } from "./IUserRepo";
 
-export class UsersRepoPG  implements IUsersRepo {
+export class UsersRepoPG implements IUsersRepo {
   queries = new Queries();
 
   userRegistration(body: any): Promise<any> {
@@ -20,7 +20,7 @@ export class UsersRepoPG  implements IUsersRepo {
           const new_user = await pool.query(this.queries.addUser, [
             body.email,
             hashedPassword,
-            body.status,
+            "active",
             body.role,
           ]);
           resolve(new_user.rows[0]);

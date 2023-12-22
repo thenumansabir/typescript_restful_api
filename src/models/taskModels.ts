@@ -1,23 +1,26 @@
 import mongoose, { Document } from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
 export interface Task {
+  _id: string;
   task_title: string;
   task_description: string;
   is_completed: boolean;
-  user_id : string;
-  files_url: string
+  user_id: string;
+  files_url: string;
 }
 
-export interface TaskDocument extends Task, Document {}
+export interface TaskDocument extends Task, Document {
+  _id: string;
+}
 
 const TaskSchema = new mongoose.Schema({
+  _id: { type: String, default: uuidv4 },
   task_title: { type: String, required: true },
   task_description: { type: String, required: true },
   is_completed: { type: Boolean, default: false },
   user_id: { type: String, required: true },
-  files_url: { type: Array},
-
-
+  files_url: { type: Array },
 });
 
 export const TaskModel = mongoose.model<TaskDocument>("Task", TaskSchema);
